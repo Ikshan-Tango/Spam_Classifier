@@ -26,7 +26,7 @@ for i in range(len(data)):
 # print(corpus)
 
 # Creating the TF-IDF model
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 cv = TfidfVectorizer(max_features = 2500) 
 """
@@ -78,3 +78,26 @@ from sklearn.metrics import accuracy_score
 accuracy = accuracy_score(y_test,y_pred)
 
 print("Accuracy of my model is :",accuracy)
+
+
+"""
+Making an example and testing it out as well
+"""
+# Preprocess the input sentence
+input_sentence = "Hello customer, get 10,000$ discount for free, click on this link www.ikshan.com"
+preprocessed_sentence = re.sub('[^a-zA-Z]', ' ', input_sentence)  # Remove non-alphabetic characters
+preprocessed_sentence = preprocessed_sentence.lower()  # Convert to lowercase
+preprocessed_sentence = preprocessed_sentence.split()  # Tokenize into words
+preprocessed_sentence = [lemmatizer.lemmatize(word) for word in preprocessed_sentence if word not in set(stopwords.words('english'))]  # Remove stopwords and lemmatize
+preprocessed_sentence = ' '.join(preprocessed_sentence)
+
+# Convert the preprocessed sentence to TF-IDF representation
+sentence_tfidf = cv.transform([preprocessed_sentence]).toarray()
+
+# Use the trained model to predict the label
+prediction = spam_detect_model.predict(sentence_tfidf)
+
+# Map the prediction to the corresponding label
+label = "spam" if prediction[0] == 1 else "ham"
+
+print("The sentence is classified as:", label)
